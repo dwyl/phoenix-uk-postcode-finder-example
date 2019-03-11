@@ -7,24 +7,30 @@ defmodule StoreFinderWeb.PageController do
   end
 
   def nearby_stores(conn, %{"postcode" => postcode, "within" => within}) do
-    if valid_postcode_format?(postcode) do
-      
-      postcode_char = String.to_charlist(postcode)
-      {:ok, {{'HTTP/1.1', 200, 'OK'}, _headers, body}} =
-        :httpc.request(:get, {'https://api.postcodes.io/postcodes/' ++ postcode_char, []}, [], [])
+    case check_postcode(postcode) do
+      false ->
+        conn
+        |> put_flash(:error, "invalid postcode")
+        |> render("index.html")
 
-      {:ok, parsed_body} = Jason.decode(body)
-      lat = parsed_body["result"]["latitude"]
-      long = parsed_body["result"]["longitude"]
+      decoded_response ->
+        lat = decoded_response["result"]["latitude"]
+        long = decoded_response["result"]["longitude"]
+        {within, _} = Integer.parse(within)
+        nearby_stores = Haversine.find_nearest_stores({lat, long}, within)
 
-      # converts within from a string to an integer
-      {within, _} = Integer.parse(within)
+        render(conn, "store.html", stores: nearby_stores)
+    end
+  end
 
-      nearby_stores = Haversine.find_nearest_stores({lat, long}, within)
-
-      render(conn, "store.html", stores: nearby_stores)
+  # HELPERS
+  defp check_postcode(postcode) do
+    with valid_postcode_format?(postcode),
+    {:ok, res} <- check_postcode_with_postcodesio(postcode),
+    %{"status" => 200} <- Jason.decode!(res.body) do
+      Jason.decode!(res.body)
     else
-      render(conn, "store.html", stores: [])
+      (_ -> false)
     end
   end
 
@@ -32,6 +38,7 @@ defmodule StoreFinderWeb.PageController do
     postcode = String.replace(postcode, " ", "")
     HTTPoison.get(~s(api.postcodes.io/postcodes/#{postcode}))
   end
+
   # Mention that I got this from dwyl fields
   defp valid_postcode_format?(postcode) do
     regex =
