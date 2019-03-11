@@ -10,8 +10,8 @@ defmodule StoreFinder.Haversine do
   end
 
   defp calc_distance({lat1, long1}, {lat2, long2}) do
-    v = :math.pi / 180
-    r = 6372.8
+    v = :math.pi / 180 # Radian
+    r = 6372.8 # km for the earth radius
 
     dlat  = :math.sin((lat2 - lat1) * v / 2)
     dlong = :math.sin((long2 - long1) * v / 2)
