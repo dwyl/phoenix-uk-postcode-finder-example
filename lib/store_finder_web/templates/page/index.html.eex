@@ -1,0 +1,5 @@
+<%= form_for @conn, Routes.page_path(@conn, :nearby_stores), fn f -> %>
+  <%= text_input f, :postcode %>
+  <%= number_input f, :within %>
+  <%= submit "Search" %>
+<% end %>

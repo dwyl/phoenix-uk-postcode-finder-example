@@ -17,10 +17,6 @@ defmodule StoreFinderWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    post "/nearby-stores", PageController, :nearby_stores
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", StoreFinderWeb do
-  #   pipe_through :api
-  # end
 end
