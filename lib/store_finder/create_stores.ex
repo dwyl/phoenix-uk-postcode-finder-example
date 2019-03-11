@@ -5,10 +5,8 @@ defmodule StoreFinder.CreateStores do
   defp get_random_postcodes(n, _acc) when n > 200, do: "Too many postcodes."
 
   defp get_random_postcodes(n, acc) do
-    {:ok, {{'HTTP/1.1', 200, 'OK'}, _headers, body}} =
-      :httpc.request(:get, {'https://api.postcodes.io/random/postcodes', []}, [], [])
-
-    {:ok, parsed_body} = Jason.decode(body)
+    {:ok, res} = HTTPoison.get("https://api.postcodes.io/random/postcodes")
+    {:ok, parsed_body} = Jason.decode(res.body)
 
     postcode =
       parsed_body["result"]["postcode"]

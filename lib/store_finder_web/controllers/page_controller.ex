@@ -28,6 +28,10 @@ defmodule StoreFinderWeb.PageController do
     end
   end
 
+  defp check_postcode_with_postcodesio(postcode) do
+    postcode = String.replace(postcode, " ", "")
+    HTTPoison.get(~s(api.postcodes.io/postcodes/#{postcode}))
+  end
   # Mention that I got this from dwyl fields
   defp valid_postcode_format?(postcode) do
     regex =
