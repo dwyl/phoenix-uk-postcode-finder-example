@@ -1,0 +1,3 @@
+<%= for {postcode, _lat, _long} <- @stores do %>
+  <p><%= postcode %></p>
+<% end %>

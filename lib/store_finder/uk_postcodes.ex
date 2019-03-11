@@ -1,15 +1,14 @@
 defmodule StoreFinder.UKPostcodes do
-  @csv_url 'https://raw.githubusercontent.com/dwyl/uk-postcodes-latitude-longitude-complete-csv/master/ukpostcodes.csv.zip'
+  @csv_url "https://raw.githubusercontent.com/dwyl/uk-postcodes-latitude-longitude-complete-csv/master/ukpostcodes.csv.zip"
   @zip_file_name "postcodes.zip"
   @zip_file_name_charlist String.to_charlist(@zip_file_name)
 
   # Gets zip file from github and saves the response to body then writes the
   # zip file to allow it to be unzipped so the csv can be extracted
   def create_csv_file() do
-    {:ok, {{'HTTP/1.1', 200, 'OK'}, _headers, body}} =
-      :httpc.request(:get, {@csv_url, []}, [], [])
+    {:ok, res} = HTTPoison.get(@csv_url)
 
-    case File.write(@zip_file_name, body) do
+    case File.write(@zip_file_name, res.body) do
       :ok ->
         IO.inspect("Created zip file")
         unzip_file_name()
