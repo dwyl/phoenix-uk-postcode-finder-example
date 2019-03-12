@@ -30,7 +30,7 @@ In your terminal, make a new Phoenix application by running the command...
 mix phx.new store_finder
 ```
 
-Type y when asked if you want to install the dependencies. This may take a few
+Type `y` when asked if you want to install the dependencies. This may take a few
 seconds. Once this is done, `cd` into the directory.
 ```
 cd store_finder
@@ -90,14 +90,15 @@ end
 
 Let's take a look at this code in a little more detail.
 
-The `use GenServer` allows us to create a GenServer. This will allow us to run
-the code in this module when the application is started. We still need to do a
-little more for this to happen but we will touch on that a little later. You can
-find out more about GenServers [here](https://hexdocs.pm/elixir/GenServer.html).
+The `use GenServer` allows us to create a GenServer. This will allow the code in
+this module to run when the application is started. We still need to do a little
+more for this to happen but we will touch on that a little later. You can find
+out more about GenServers [here](https://hexdocs.pm/elixir/GenServer.html).
 
 What we are going to focus on for this example is the logic inside the `init/1`
-function, the two lines starting with `:ets`. These are the lines that are going
-to create our `ets` table and store all of our "store" information.
+function, specifically the two lines starting with `:ets`. These are the lines
+that are going to create our `ets` table and store all of our "store"
+information.
 
 As mentioned above, ETS stands for erlang term storage. In elixir, if you want
 to call an erlang function we put a `:` before the name of that module and then
