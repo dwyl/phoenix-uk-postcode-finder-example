@@ -1,8 +1,10 @@
 defmodule StoreFinder.CreateStores do
+  def get_random_postcodes(n)when not is_integer(n), do: "Need to pass integer"
+  def get_random_postcodes(n) when n < 1, do: "arg needs to be at least 1"
+  def get_random_postcodes(n) when n >= 200, do: "arg needs to be less than 200"
   def get_random_postcodes(n), do: get_random_postcodes(n, [])
 
   defp get_random_postcodes(0, acc), do: acc
-  defp get_random_postcodes(n, _acc) when n > 200, do: "Too many postcodes."
 
   defp get_random_postcodes(n, acc) do
     {:ok, res} = HTTPoison.get("https://api.postcodes.io/random/postcodes")
@@ -18,6 +20,7 @@ defmodule StoreFinder.CreateStores do
 
     get_random_postcodes(n - 1, [{postcode, lat, long} | acc])
   end
+
 
   # A "here's one I made earlier" type list
   # so people do not need to call get_random_postcodes themselves
