@@ -4,7 +4,6 @@ defmodule StoreFinder.Application do
   @moduledoc false
 
   use Application
-  import Supervisor.Spec
 
   def start(_type, _args) do
     # List all child processes to be supervised
@@ -15,7 +14,7 @@ defmodule StoreFinder.Application do
       StoreFinderWeb.Endpoint,
       # Starts a worker by calling: StoreFinder.Worker.start_link(arg)
       # {StoreFinder.Worker, arg},
-      worker(StoreFinder.StoreCache, [])
+      StoreFinder.StoreCache
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
