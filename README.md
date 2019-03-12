@@ -128,8 +128,8 @@ The last thing we need to do for these functions to be called when our app is
 started is to update our `application.ex` file.
 
 Open the `application.ex`. You should see something that resembles this...
-(I have removed the comments to make it more concise but it should look about
-the same)
+(I have removed the comments for the tutorial to make it more concise but it
+should look about the same)
 ```ex
 defmodule StoreFinder.Application do
   use Application
@@ -152,7 +152,6 @@ We will want to add our module to the list of `children`. To do this simply add
 the module name to the list of children like so...
 ```ex
 children = [
-  # Start the Ecto repository
   StoreFinder.Repo,
   StoreFinderWeb.Endpoint,
   StoreFinder.StoreCache # <==== This line
@@ -176,6 +175,83 @@ here type the following command...
 :ets.match_object(:store_cache, :_)
 ```
 
-This will return a list of all the "stores" saved in the `ets` table. As you
-can see you didn't have to do anything to be able to access this data 😁
+The above function is just saying to return all the elements from the table that
+match the second argument. In elixir if we pass an `_` when pattern matching it
+matches any value. The only difference here is that because this is an erlang
+function we need us `:_`.
 
+This will return a list of all the "stores" saved in the `ets` table. As you
+can see you didn't have to do anything to be able to access this data, it was
+just available when the application started 😁
+
+### Testing ets table creation
+
+Now let's add tests to check our `ets` table is being created as expected. We
+don't need/want to test the `ets` functions themselves. What we want to do is
+test that the table exists.
+
+First let's run the tests that were generated when the app was created. Run the
+tests with...
+```
+mix test
+```
+It should log the following...
+```
+...
+
+Finished in 0.09 seconds
+3 tests, 0 failures
+```
+
+Now that we have seen that the tests are working we can add our test for the
+`ets` table. This will be a really quick and easy test to write as it will be
+very similar to what we did in our terminal in the end of the previous section.
+
+We will need to start by creating a new file for this test. Create the file
+`test/store_finder/store_cache_test.exs`. In this file add the following code...
+```ex
+defmodule StoreFinder.StoreCacheTest do
+  use StoreFinderWeb.ConnCase
+
+  test "ets table exists when application starts" do
+    stores = :ets.match_object(:store_cache, :_)
+    assert is_list(stores)
+    refute Enum.empty?(stores)
+  end
+end
+```
+
+This test is very simple. We first assign all records from the `store_cache` to
+the variable `stores`. In reality this enough to prove the table has been
+created. If it didn't exist then we would get an error that looked something
+like...
+```
+** (ArgumentError) argument error
+    (stdlib) :ets.match_object(:incorrect_name, :_)
+```
+
+But we should make sure that our table returns what we expect it to. We do this
+with the next two lines.
+
+First we `assert` that `stores` is a list. `assert` expects a `truthy` value.
+`is_list/1` returns `true` if the argument is a list and false otherwise.
+
+Next we confirm that this list is not empty. We are using `refute` for this.
+`refute` is the opposite to `assert` and expects a `falsy` value. We are calling
+the `Enum.empty?/1` function which returns `true` if the enumerable passed in is
+empty. As our list should not be empty we expect this to return `false`.
+
+Now all we need to do is run the tests again. Run `mix test` again in your
+terminal. You should now have 4 passing tests.
+```
+....
+
+Finished in 0.09 seconds
+4 tests, 0 failures
+```
+
+We can now be certain that the table is being created as we would like
+🎉🎉🎉🎉🎉
+
+You can feel free to add more specific tests, for example, to make sure that a
+value you expect to be in the table actually is.
