@@ -71,8 +71,8 @@ the following code...
 defmodule StoreFinder.StoreCache do
   use GenServer
 
-  def start_link do
-    GenServer.start_link(__MODULE__, %{}, name: StoreCache)
+  def start_link(init_arg) do
+    GenServer.start_link(__MODULE__, init_arg, name: StoreCache)
   end
 
   def init(initial_state) do
@@ -125,7 +125,7 @@ tuples, in our case the store list we added. And that is it. These two lines
 create and store all of the info we need.
 
 The last thing we need to do for these functions to be called when our app is
-started is to add a `worker` in our `application.ex` file.
+started is to update our `application.ex` file.
 
 Open the `application.ex`. You should see something that resembles this...
 (I have removed the comments to make it more concise but it should look about
@@ -148,46 +148,15 @@ defmodule StoreFinder.Application do
 end
 ```
 
-We will want to add our `worker` to the list of `children`. Add the following
-lines to your file.
-
-Add `import Supervisor.Spec` to the top of your module and add
-`worker(StoreFinder.StoreCache, [])` to the list of `children`. You should end
-up with something link...
+We will want to add our module to the list of `children`. To do this simply add
+the module name to the list of children like so...
 ```ex
-defmodule StoreFinder.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
-  @moduledoc false
-
-  use Application
-  import Supervisor.Spec
-
-  def start(_type, _args) do
-    # List all child processes to be supervised
-    children = [
-      # Start the Ecto repository
-      StoreFinder.Repo,
-      # Start the endpoint when the application starts
-      StoreFinderWeb.Endpoint,
-      # Starts a worker by calling: StoreFinder.Worker.start_link(arg)
-      # {StoreFinder.Worker, arg},
-      worker(StoreFinder.StoreCache, [])
-    ]
-
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: StoreFinder.Supervisor]
-    Supervisor.start_link(children, opts)
-  end
-
-  # Tell Phoenix to update the endpoint configuration
-  # whenever the application is updated.
-  def config_change(changed, _new, removed) do
-    StoreFinderWeb.Endpoint.config_change(changed, removed)
-    :ok
-  end
-end
+children = [
+  # Start the Ecto repository
+  StoreFinder.Repo,
+  StoreFinderWeb.Endpoint,
+  StoreFinder.StoreCache # <==== This line
+]
 ```
 
 Now if we start our application we will create an `ets` table, so let's give it
@@ -208,4 +177,5 @@ here type the following command...
 ```
 
 This will return a list of all the "stores" saved in the `ets` table. As you
-can see you didn't have to do anything to be able to access this data 😁.
+can see you didn't have to do anything to be able to access this data 😁
+
