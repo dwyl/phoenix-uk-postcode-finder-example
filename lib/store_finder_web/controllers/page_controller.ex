@@ -11,7 +11,7 @@ defmodule StoreFinderWeb.PageController do
       false ->
         conn
         |> put_flash(:error, "invalid postcode")
-        |> render("index.html")
+        |> redirect(to: "/")
 
       decoded_response ->
         lat = decoded_response["result"]["latitude"]
@@ -19,7 +19,7 @@ defmodule StoreFinderWeb.PageController do
         {within, _} = Integer.parse(within)
         nearby_stores = Haversine.find_nearest_stores({lat, long}, within)
 
-        render(conn, "store.html", stores: nearby_stores)
+        render(conn, "nearby_stores.html", stores: nearby_stores)
     end
   end
 

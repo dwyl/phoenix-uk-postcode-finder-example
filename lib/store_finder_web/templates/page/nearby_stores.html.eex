@@ -1,3 +1,4 @@
+<h1>Nearby Stores</h1>
 <%= for {postcode, _lat, _long} <- @stores do %>
   <p><%= postcode %></p>
 <% end %>
