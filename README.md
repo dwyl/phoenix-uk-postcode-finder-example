@@ -192,3 +192,19 @@ end
 Now if we start our application we will create an `ets` table, so let's give it
 a go.
 
+As we are not currently doing anything with the data from our `ets` table we
+will not be able to tell if it is working by just starting the app. We should
+(and will) write tests to check it is working but for right now open your
+terminal and type...
+```
+iex -S mix
+```
+
+This will compile your application and start an interactive elixir shell. In
+here type the following command...
+```
+:ets.match_object(:store_cache, :_)
+```
+
+This will return a list of all the "stores" saved in the `ets` table. As you
+can see you didn't have to do anything to be able to access this data 😁.
