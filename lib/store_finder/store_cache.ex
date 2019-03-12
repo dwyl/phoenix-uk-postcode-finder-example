@@ -1,8 +1,8 @@
 defmodule StoreFinder.StoreCache do
   use GenServer
 
-  def start_link do
-    GenServer.start_link(__MODULE__, %{}, name: StoreCache)
+  def start_link(init_arg) do
+    GenServer.start_link(__MODULE__, init_arg, name: StoreCache)
   end
 
   def init(initial_state) do
